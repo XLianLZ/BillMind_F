@@ -5,10 +5,10 @@ import 'package:nav_bar/services/debt_service.dart';
 class DebtsPage extends StatefulWidget {
   final int clientId;
 
-  const DebtsPage({Key? key, required this.clientId}) : super(key: key);
+  const DebtsPage({super.key, required this.clientId});
 
   @override
-  _DebtsPageState createState() => _DebtsPageState();
+  State<DebtsPage> createState() => _DebtsPageState();
 }
 
 class _DebtsPageState extends State<DebtsPage> {
@@ -24,7 +24,7 @@ class _DebtsPageState extends State<DebtsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Debts Page'),
+        title: const Text('Debts Page'),
       ),
       body: FutureBuilder<List<Debt>>(
         future: _futureDebts,

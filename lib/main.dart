@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:nav_bar/models/client.dart';
 import 'package:nav_bar/pages/principal/alerts_page.dart';
 import 'package:nav_bar/pages/principal/balance_page.dart';
 import 'package:nav_bar/pages/principal/debts_page.dart';
 import 'package:nav_bar/pages/principal/profile_page.dart';
+
+import 'pages/sessions/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
 
 class  MyHomePage extends StatefulWidget {
   final String token;
-  final Client clientId;
+  final int clientId;
 
   const MyHomePage({super.key, required this.token, required this.clientId});
 
@@ -55,10 +56,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       body: TabBarView(
         controller: _tabController,
         children: [
-          DebtsPage(),
+          DebtsPage( clientId: widget.clientId),
           AlertsPage(),
           BalancePage(),
-          ProfilePage(clientId: widget.clientId.id),
+          ProfilePage(clientId: widget.clientId),
         ],
       ),
       bottomNavigationBar: TabBar(

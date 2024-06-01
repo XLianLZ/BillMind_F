@@ -10,8 +10,23 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Register Page'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Register'),
+      ),
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            const Text('Register'),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Go back!'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nav_bar/main.dart';
+import 'package:nav_bar/services/client_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -8,12 +10,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  
-  final _fromKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final String _errorMessage = '';
+  String _errorMessage = '';
   /*
   void _login() {
     if (_fromKey.currentState!.validate()) {
@@ -23,19 +24,19 @@ class _LoginScreenState extends State<LoginScreen> {
       if (_validateCredentials(email, password)) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MyHomePage()),
+          MaterialPageRoute(builder: (context) => MyHomePage(token: token, clientId: clientId)),
         );
-      } else {
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      } finally {
         setState(() {
-          _errorMessage = 'Invalid email or password';
+          _isLoading = false;
         });
       }
     }
-  
   }
-  */
-
-  //genera la funcion _ValidateCredentials usando el email y password como parametros de entrada e integrando el archivo client_service.dart
 
   @override
   Widget build(BuildContext context) {
@@ -44,16 +45,15 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _fromKey,
+          key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration: InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
+                    return 'Por favor ingresa tu correo';
                   }
                   return null;
                 },
@@ -64,21 +64,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
+                    return 'Por favor ingresa tu contraseña';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: /*TODO: _login*/ () {},
-                child: const Text('Login'),
+                child: Text('Login'),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               if (_errorMessage.isNotEmpty)
                 Text(
                   _errorMessage,
-                  style: const TextStyle(color: Colors.red),
+                  style: TextStyle(color: Colors.red),
                 ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nav_bar/main.dart';
-import 'package:nav_bar/services/client_service.dart';
+import 'package:nav_bar/models/client.dart';
+import 'package:nav_bar/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,52 +11,60 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  
-  final _fromKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
-  String _errorMessage = '';
-  /*
-  void _login() {
-    if (_fromKey.currentState!.validate()) {
-      final email = _emailController.text;
-      final password = _passwordController.text;
+  bool _isLoading = false;
 
-      if (_validateCredentials(email, password)) {
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final response = await _authService.login(
+          _emailController.text,
+          _passwordController.text,
+        );
+        final String token = response['token'];
+        final Client clientId = response['clientId'];
+        // Navega a la pantalla principal
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MyHomePage()),
+          MaterialPageRoute(builder: (context) => MyHomePage(token: token, clientId: clientId)),
         );
-      } else {
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      } finally {
         setState(() {
-          _errorMessage = 'Invalid email or password';
+          _isLoading = false;
         });
       }
     }
-  
   }
-  */
-
-  //genera la funcion _ValidateCredentials usando el email y password como parametros de entrada e integrando el archivo client_service.dart
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _fromKey,
+          key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(labelText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
+                    return 'Por favor ingresa tu correo';
                   }
                   return null;
                 },
@@ -66,22 +75,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
+                    return 'Por favor ingresa tu contraseña';
                   }
                   return null;
                 },
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: /*TODO: _login*/ () {},
-                child: Text('Login'),
-              ),
-              SizedBox(height: 20),
-              if (_errorMessage.isNotEmpty)
-                Text(
-                  _errorMessage,
-                  style: TextStyle(color: Colors.red),
-                ),
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: _login,
+                      child: Text('Login'),
+                    ),
             ],
           ),
         ),

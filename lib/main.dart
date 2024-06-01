@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nav_bar/models/client.dart';
 import 'package:nav_bar/pages/principal/alerts_page.dart';
 import 'package:nav_bar/pages/principal/balance_page.dart';
 import 'package:nav_bar/pages/principal/debts_page.dart';
@@ -16,13 +17,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(),
+      home: LoginScreen(),
     );
   }
 }
 
 class  MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final String token;
+  final Client clientId;
+
+  const MyHomePage({super.key, required this.token, required this.clientId});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -45,18 +49,17 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    const int clientId = 1;
     return Scaffold(
       appBar: AppBar(
         title: const Text('TabBar Example'),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
+        children: [
           DebtsPage(),
           AlertsPage(),
           BalancePage(),
-          ProfilePage(clientId: clientId),
+          ProfilePage(clientId: widget.clientId.id),
         ],
       ),
       bottomNavigationBar: TabBar(
